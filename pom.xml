@@ -50,6 +50,8 @@
         <dandelion.datatables.version>0.8.5</dandelion.datatables.version>
         <dandelion.datatables.export.itext.version>0.1.5</dandelion.datatables.export.itext.version>
         <dandelion.datatables.servlet2.version>0.1.4</dandelion.datatables.servlet2.version>
+
+        <embeded-tomcat.version>7.0.91</embeded-tomcat.version>
       
         <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
         <maven-clean-plugin.version>2.5</maven-clean-plugin.version>
@@ -70,7 +72,7 @@
         <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
         <maven-site-plugin.version>3.2</maven-site-plugin.version>
         <maven-source-plugin.version>2.2.1</maven-source-plugin.version>
-        <maven-surefire-plugin.version>2.13</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <maven-taglist-plugin.version>2.4</maven-taglist-plugin.version>
         <maven.version.range>[2.2.1,4)</maven.version.range>
         <maven-war-plugin.version>2.3</maven-war-plugin.version>
@@ -138,7 +140,7 @@
         </dependency>
         <!-- MySQL JDBC Connector -->
         <!-- 
-		<dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.version}</version>
@@ -158,7 +160,7 @@
             <artifactId>ehcache-core</artifactId>
         </dependency>
         <!-- ********************************************************************** 
-             ** 				SPRING DATA			 							 ** 
+             **                 SPRING DATA                                      ** 
              ********************************************************************** -->
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -166,9 +168,16 @@
         </dependency>
         <!-- Servlet -->
         <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>${embeded-tomcat.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
@@ -242,18 +251,47 @@
             <groupId>com.github.dandelion</groupId>
             <artifactId>datatables-jsp</artifactId>
             <version>${dandelion.datatables.version}</version>
-         </dependency>
-         <dependency>
+        </dependency>
+        <dependency>
             <groupId>com.github.dandelion</groupId>
             <artifactId>datatables-export-itext</artifactId>
             <version>${dandelion.datatables.export.itext.version}</version>
-         </dependency>
-         <dependency>
+        </dependency>
+        <dependency>
             <groupId>com.github.dandelion</groupId>
             <artifactId>datatables-servlet2</artifactId>
             <version>${dandelion.datatables.servlet2.version}</version>
-         </dependency>
-       </dependencies>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${embeded-tomcat.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-juli</artifactId>
+            <version>${embeded-tomcat.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <version>${embeded-tomcat.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jasper</artifactId>
+            <version>${embeded-tomcat.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 
     <!-- all Maven plugin versions are mentioned in order to guarantee the build reproducibility in the long term -->
     <build>
@@ -371,21 +409,24 @@
                             </includes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
+                        <fileset>
+                            <directory>${project.basedir}/pids</directory>
+                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
             
 
-		    <plugin>
-		      <groupId>org.apache.tomcat.maven</groupId>
-		      <artifactId>tomcat7-maven-plugin</artifactId>       
-		      <version>${maven-tomcat-plugin.version}</version>     
-		      <configuration>          
-		        <server>tomcat-development-server</server>
-		        <port>9966</port>
-		        <path>/petclinic</path>
-		      </configuration>
-		    </plugin> 
+            <plugin>
+              <groupId>org.apache.tomcat.maven</groupId>
+              <artifactId>tomcat7-maven-plugin</artifactId>       
+              <version>${maven-tomcat-plugin.version}</version>     
+              <configuration>          
+                <server>tomcat-development-server</server>
+                <port>9966</port>
+                <path>/petclinic</path>
+              </configuration>
+            </plugin> 
 
 
             <!-- *******************************************************
@@ -912,5 +953,28 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+      <profile>
+        <id>bench</id>
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                <includes>
+                  <incude>info.ragozin.demo.DemoStarter</incude>
+                </includes>
+                <excludes>
+                  <exclude>**/*Tests.java</exclude>
+                </excludes>
+                <shutdown>kill</shutdown>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>    
+      </profile>
+    </profiles>
 
 </project>
