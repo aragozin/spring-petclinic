@@ -12,12 +12,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
+import org.apache.catalina.AccessLog;
 import org.apache.catalina.Context;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.core.AccessLogAdapter;
 import org.apache.catalina.startup.HostConfig;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.valves.AccessLogValve;
+import org.apache.catalina.valves.Constants;
 
 public class TomcatRunner {
 
@@ -63,26 +72,40 @@ public class TomcatRunner {
 		cmd.addAll(args);		
 		cmd.add("-Xloggc:" + file("var/tomcat/gc.log").getAbsolutePath());			
 	}
-    
-    public void launch() throws LifecycleException {
+
+	public void initLogging() throws SecurityException, IOException {
+		Logger logger = Logger.getLogger("");
+		Handler fileHandler = new FileHandler(DemoInitializer.path("var/tomcat/catalina.out"), true);
+		fileHandler.setFormatter(new SimpleFormatter());
+		fileHandler.setLevel(Level.INFO);
+		fileHandler.setEncoding("UTF-8");
+		logger.addHandler(fileHandler);
+	}
+	
+    public void launch() throws LifecycleException, SecurityException, IOException {
+    	
+//    	initLogging();
 
     	Tomcat tomcat = new Tomcat();
         tomcat.setPort(DemoInitializer.propAsInt("tomcat.port", 9966));
-        tomcat.setBaseDir("var/tomcat");
+        tomcat.setBaseDir(DemoInitializer.path("var/tomcat"));
+        AccessLogValve accessLog = new AccessLogValve();
+        accessLog.setPattern(Constants.AccessLog.COMBINED_PATTERN);
+        tomcat.getEngine().getPipeline().addValve(accessLog);
         
         Host host = tomcat.getHost();
         host.setDeployOnStartup(true);
         host.setAutoDeploy(true);
         host.addLifecycleListener(new HostConfig());
 
-        @SuppressWarnings("unused")
 		Context context = tomcat.addWebapp("/petclinic", new File("src/main/webapp").getAbsolutePath());
+        context.setSessionTimeout(1); // reduce session live time to avoid OOM under sustained load
 
         tomcat.start();
         tomcat.getServer().await();
     }
 
-    public static void main(String[] args) throws LifecycleException {
+    public static void main(String[] args) throws Exception {
 //    	System.out.println("Starting);
     	initLifeGrant("tomcat");
     	new TomcatRunner().launch();

@@ -14,9 +14,11 @@
         </encoder>
     </appender>
 
-    <logger name="org.springframework.samples.petclinic" level="debug"/>
+    <!-- <logger name="org.springframework.samples.petclinic" level="debug"/> -->
     
-     <logger name="org.springframework.web.servlet.view" level="debug"/>
+    <!-- <logger name="org.springframework.web.servlet.view" level="debug"/> -->
+  
+    <logger name="com.github.dandelion.datatables.core.properties.PropertiesLoader" level="warn"/>
 
     <root level="info">
         <appender-ref ref="console"/>
