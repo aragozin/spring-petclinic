@@ -255,12 +255,10 @@
         <dependency>
             <groupId>com.github.dandelion</groupId>
             <artifactId>datatables-export-itext</artifactId>
-            <version>${dandelion.datatables.export.itext.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.dandelion</groupId>
             <artifactId>datatables-servlet2</artifactId>
-            <version>${dandelion.datatables.servlet2.version}</version>
         </dependency>
 
         <dependency>
@@ -952,6 +950,29 @@
                 <version>${hamcrest.version}</version>
                 <scope>test</scope>
             </dependency>
+
+             <!-- Dandelion -->
+             <dependency>
+                 <groupId>com.github.dandelion</groupId>
+                 <artifactId>datatables-jsp</artifactId>
+                 <version>${dandelion.datatables.version}</version>
+             </dependency>
+             <dependency>
+                 <groupId>com.github.dandelion</groupId>
+                 <artifactId>datatables-core</artifactId>
+                 <version>${dandelion.datatables.version}</version>
+             </dependency>
+             <dependency>
+                 <groupId>com.github.dandelion</groupId>
+                 <artifactId>datatables-export-itext</artifactId>
+                 <version>${dandelion.datatables.export.itext.version}</version>
+             </dependency>
+             <dependency>
+                 <groupId>com.github.dandelion</groupId>
+                 <artifactId>datatables-servlet2</artifactId>
+                 <version>${dandelion.datatables.servlet2.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

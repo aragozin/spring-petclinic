@@ -1,0 +1,6 @@
+Version 1
+=========
+
+Mostly unmodified version of Spring Petclinic (from 2013) used in article(https://blog.ippon.fr/2013/03/11/improving-the-performance-of-the-spring-petclinic-sample-application-part-1-of-5/).
+
+ 
