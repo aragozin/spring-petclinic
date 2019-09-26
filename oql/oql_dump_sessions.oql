@@ -1,0 +1,27 @@
+function onMapEntry(map, func) {
+  if (map != null && map.table != null) {
+
+    for(var i = 0; i < map.table.length; ++i) {
+       var e = map.table[i];
+       while(e) {
+         var k = e.key;
+         var v = e.val ? e.val : e.value;
+         func(e.key, v);
+         e = e.next;
+       }
+    }
+  }
+};
+
+var result = [];
+
+function onSession(session) {
+  var s = {};
+  onMapEntry(session.attributes, function(k, v) {
+    result.push({key: k, value: v});
+  });
+}
+
+count(map(heap.objects('org.apache.catalina.session.StandardSession'), onSession));
+
+result;
